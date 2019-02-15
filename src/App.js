@@ -1,25 +1,46 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-
+import Login from './Login';
+import HomePage from './Homepage';
 class App extends Component {
+  constructor(props){
+    super(props);
+    this.state={
+      loginScreen:[],
+      homeScreen:[]
+    }
+  }
+
+  componentWillMount(){
+    let isloginflag = localStorage.getItem('isLogin');
+    if(isloginflag) {
+      let role = localStorage.getItem('role');
+      let roledata = null;
+      if(role) {
+        roledata=role;
+      }
+      var HomePageScreen = [];
+      HomePageScreen.push(<HomePage appContext={this} role={roledata}/>);
+      this.setState({
+        homeScreen:HomePageScreen
+      });
+    } else {
+      var loginscreen=[];
+      loginscreen.push(<Login appContext={this}/>);
+      this.setState({
+        loginScreen:loginscreen
+      });
+    }
+  }
+  
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <div className="loginscreen">
+          {this.state.loginScreen}
+          {this.state.homeScreen}
+        </div>
       </div>
     );
   }
