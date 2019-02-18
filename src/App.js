@@ -14,18 +14,17 @@ class App extends Component {
 
   componentWillMount(){
     let isloginflag = localStorage.getItem('isLogin');
-    if(isloginflag) {
-      let role = localStorage.getItem('role');
-      let roledata = null;
-      if(role) {
-        roledata=role;
-      }
+    console.log("data",isloginflag)
+    if(isloginflag && isloginflag != 'false') {
+      let userdata = JSON.parse(localStorage.getItem('userdata'));
+      console.log('userdata',userdata);
       var HomePageScreen = [];
-      HomePageScreen.push(<HomePage appContext={this} role={roledata}/>);
+      HomePageScreen.push(<HomePage appContext={this} userdata={userdata}/>);
       this.setState({
         homeScreen:HomePageScreen
       });
     } else {
+      console.log("hello")
       var loginscreen=[];
       loginscreen.push(<Login appContext={this}/>);
       this.setState({
