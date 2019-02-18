@@ -16,6 +16,7 @@ class Login extends Component {
     }
 
     handleClick(event) {
+        console.log('event',event.target);
         var apiBaseUrl = "http://localhost:4000/api/";
         var self = this;
         var payload = {
@@ -25,12 +26,14 @@ class Login extends Component {
 
         let logindata = [
             {
+                "id" : 1,
                 "name" : "Admin",
                 "email" : "admin@gmail.com",
                 "password" : "admin123",
                 "role" : "admin"
             },
             {
+                "id" : 2,
                 "name" : "User",
                 "email" : "user@gmail.com",
                 "password" : "user123",
@@ -47,7 +50,8 @@ class Login extends Component {
             } else {
                 let userdata = {
                     role: logindata[index].role,
-                    name: logindata[index].name
+                    name: logindata[index].name,
+                    id: logindata[index].id
                 };
                 var HomePageScreen = [];
                 HomePageScreen.push(<HomePage appContext={self.props.appContext} userdata={userdata}/>);
