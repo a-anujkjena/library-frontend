@@ -25,11 +25,13 @@ class Login extends Component {
 
         let logindata = [
             {
+                "name" : "Admin",
                 "email" : "admin@gmail.com",
                 "password" : "admin123",
                 "role" : "admin"
             },
             {
+                "name" : "User",
                 "email" : "user@gmail.com",
                 "password" : "user123",
                 "role" : "user"
@@ -43,11 +45,14 @@ class Login extends Component {
             if(index == -1) {
                 this.setState({errormessage: "Wrong Email Or Password"});
             } else {
-                let roledata = logindata[index].role;
+                let userdata = {
+                    role: logindata[index].role,
+                    name: logindata[index].name
+                };
                 var HomePageScreen = [];
-                HomePageScreen.push(<HomePage appContext={self.props.appContext} role={roledata}/>);
+                HomePageScreen.push(<HomePage appContext={self.props.appContext} userdata={userdata}/>);
                 localStorage.setItem( 'isLogin', true );
-                localStorage.setItem( 'role', roledata );
+                localStorage.setItem( 'userdata', JSON.stringify(userdata) );
                 self.props.appContext.setState({ loginScreen: [], homeScreen: HomePageScreen });
             }
         } else {
