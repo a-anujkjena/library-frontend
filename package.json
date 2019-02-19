@@ -10,8 +10,13 @@
     "material-ui-icons": "^1.0.0-beta.36",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
+    "react-redux": "^6.0.0",
     "react-scripts": "2.1.5",
-    "react-tap-event-plugin": "^3.0.3"
+    "react-tap-event-plugin": "^3.0.3",
+    "redux-saga": "^1.0.1",
+    "redux-seamless-immutable": "^0.4.0",
+    "reduxsauce": "^1.0.1",
+    "seamless-immutable": "^7.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
