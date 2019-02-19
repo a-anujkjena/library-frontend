@@ -17,13 +17,13 @@ class App extends Component {
     if(isloginflag && isloginflag != 'false') {
       let userdata = JSON.parse(localStorage.getItem('userdata'));
       var HomePageScreen = [];
-      HomePageScreen.push(<HomePage appContext={this} userdata={userdata}/>);
+      HomePageScreen.push(<HomePage appContext={this} userdata={userdata} key="homepage"/>);
       this.setState({
         homeScreen:HomePageScreen
       });
     } else {
       var loginscreen=[];
-      loginscreen.push(<Login appContext={this}/>);
+      loginscreen.push(<Login appContext={this} key="loginpage"/>);
       this.setState({
         loginScreen:loginscreen
       });
