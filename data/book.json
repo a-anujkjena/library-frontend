@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "Title": "Book Title One",
+        "Author": "Author One",
+        "Year": 2000,
+        "IsIssued": "No",
+        "Date_of_Issue": null,
+        "Date_Of_Return": null,
+        "Member_Id": null
+    },
+    {
+        "id": 2,
+        "Title": "Book Title Two",
+        "Author": "Author Two",
+        "Year": 2001,
+        "IsIssued": "Yes",
+        "Date_of_Issue": "2018-12-02",
+        "Date_Of_Return": "2019-03-02",
+        "Member_Id": 2
+    },
+    {
+        "id": 3,
+        "Title": "Book Title Three",
+        "Author": "Author Three",
+        "Year": 2005,
+        "IsIssued": "Yes",
+        "Date_of_Issue": "2018-12-21",
+        "Date_Of_Return": "2019-03-15",
+        "Member_Id": 2
+    },
+    {
+        "id": 4,
+        "Title": "Book Title Four",
+        "Author": "Author Four",
+        "Year": 2010,
+        "IsIssued": "No",
+        "Date_of_Issue": null,
+        "Date_Of_Return": null,
+        "Member_Id": null
+    }
+]

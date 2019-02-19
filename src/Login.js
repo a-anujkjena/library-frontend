@@ -5,6 +5,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import _ from 'lodash';
 import HomePage from './Homepage';
+
+import userdata from '../data/user.json';
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -16,7 +18,6 @@ class Login extends Component {
     }
 
     handleClick(event) {
-        console.log('event',event.target);
         var apiBaseUrl = "http://localhost:4000/api/";
         var self = this;
         var payload = {
@@ -24,26 +25,9 @@ class Login extends Component {
             "password": this.state.password
         }
 
-        let logindata = [
-            {
-                "id" : 1,
-                "name" : "Admin",
-                "email" : "admin@gmail.com",
-                "password" : "admin123",
-                "role" : "admin"
-            },
-            {
-                "id" : 2,
-                "name" : "User",
-                "email" : "user@gmail.com",
-                "password" : "user123",
-                "role" : "user"
-            }
-        ]
+        let logindata = userdata;
 
         if((payload.email && payload.password) && (payload.email != '' && payload.password != '')){
-            console.log('email',payload.email);
-            console.log('password',payload.password);
             let index = _.findIndex(logindata,{"email":payload.email,"password":payload.password});
             if(index == -1) {
                 this.setState({errormessage: "Wrong Email Or Password"});
@@ -54,7 +38,7 @@ class Login extends Component {
                     id: logindata[index].id
                 };
                 var HomePageScreen = [];
-                HomePageScreen.push(<HomePage appContext={self.props.appContext} userdata={userdata}/>);
+                HomePageScreen.push(<HomePage appContext={self.props.appContext} userdata={userdata} key="homepage"/>);
                 localStorage.setItem( 'isLogin', true );
                 localStorage.setItem( 'userdata', JSON.stringify(userdata) );
                 self.props.appContext.setState({ loginScreen: [], homeScreen: HomePageScreen });

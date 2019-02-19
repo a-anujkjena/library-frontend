@@ -2,70 +2,35 @@ import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
-import $ from 'jquery';
 
 import _ from 'lodash';
 
 import Login from './Login';
 
+import bookdata from '../data//book.json';
+import usersdata from '../data//user.json';
+
 class HomePage extends Component {
     constructor(props) {
         super(props);
-        let books = [
-            {
-                "id": 1,
-                "Title": "Book Title One",
-                "Author": "Author One",
-                "Year": 2000,
-                "IsIssued": "No",
-                "Date_of_Issue": null,
-                "Date_Of_Return": null,
-                "Member_Id": null
-            },
-            {
-                "id": 2,
-                "Title": "Book Title Two",
-                "Author": "Author Two",
-                "Year": 2001,
-                "IsIssued": "Yes",
-                "Date_of_Issue": "2018-12-02",
-                "Date_Of_Return": "2019-03-02",
-                "Member_Id": 2
-            },
-            {
-                "id": 3,
-                "Title": "Book Title Three",
-                "Author": "Author Three",
-                "Year": 2005,
-                "IsIssued": "Yes",
-                "Date_of_Issue": "2018-12-21",
-                "Date_Of_Return": "2019-03-15",
-                "Member_Id": 2
-            },
-            {
-                "id": 4,
-                "Title": "Book Title Four",
-                "Author": "Author Four",
-                "Year": 2010,
-                "IsIssued": "No",
-                "Date_of_Issue": null,
-                "Date_Of_Return": null,
-                "Member_Id": null
-            }
-        ];
-        let finalbookdata = books;
-        let onebook = null;
-        if (props.userdata.role && props.userdata.role == 'user') {
-            if (props.userdata.id) {
-                finalbookdata = _.filter(books, { 'Member_Id': props.userdata.id });
-            }
-        }
-
         this.state = {
             userdata: props.userdata,
-            books: finalbookdata,
-            onebook: onebook
+            books: null,
+            onebook: null,
+            users: usersdata
         }
+    }
+
+    componentWillMount(){
+        let finalbookdata = bookdata;
+        if (this.state.userdata.role && this.state.userdata.role == 'user') {
+            if (this.state.userdata.id) {
+                finalbookdata = _.filter(bookdata, { 'Member_Id': this.state.userdata.id });
+            }
+        }
+        this.setState({
+            books:finalbookdata,
+        })
     }
 
 
@@ -74,7 +39,7 @@ class HomePage extends Component {
         localStorage.setItem('isLogin', false);
         localStorage.removeItem('userdata');
         var loginscreen = [];
-        loginscreen.push(<Login appContext={this.props.appContext} />);
+        loginscreen.push(<Login appContext={this.props.appContext} key="loginpage"/>);
         this.props.appContext.setState({ loginScreen: loginscreen, homeScreen: [] });
     };
 
@@ -121,7 +86,7 @@ class HomePage extends Component {
                         </thead>
                         <tbody>
                             {this.state.books.map(row => (
-                                <tr >
+                                <tr key={"rowdata"+row.id}>
                                     <td>{row.Title}</td>
                                     <td >{row.Author}</td>
                                     <td >{row.Year}</td>
@@ -188,10 +153,9 @@ class HomePage extends Component {
                                                 <div className='col-md-8'>
                                                     <select className="form-control" value={this.state.onebook ? (this.state.onebook.Member_Id ? this.state.onebook.Member_Id : '0') : '0'} id="assignto" onChange={event => this.getValues(event)}>
                                                         <option value='0'>Select Member</option>
-                                                        <option value='1'>User 1</option>
-                                                        <option value='2'>User 2</option>
-                                                        <option value='3'>User 3</option>
-                                                        <option value='4'>User 4</option>
+                                                        {this.state.users.map(optiondata => (
+                                                            <option value={optiondata.id} key={optiondata.id}>{optiondata.name}</option>
+                                                        ))}
                                                     </select>
                                                 </div>
                                             </div>
