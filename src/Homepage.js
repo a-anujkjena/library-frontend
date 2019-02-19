@@ -2,27 +2,37 @@ import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
+import { connect } from 'react-redux'
+import { Creators } from './redux/actions'
 
 import _ from 'lodash';
 
 import Login from './Login';
 
-import bookdata from '../data//book.json';
-import usersdata from '../data//user.json';
+//import bookdata from '../data/book.json';
+import usersdata from '../data/user.json';
 
 class HomePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
             userdata: props.userdata,
-            books: null,
+            books: [],
             onebook: null,
-            users: usersdata
+            users: usersdata,
+            testSagaStatus: this.props.testSagaStatus
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            books: nextProps.bookData
+        })
+    }
+
     componentWillMount(){
-        let finalbookdata = bookdata;
+        this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
+        /*let finalbookdata = bookdata;
         if (this.state.userdata.role && this.state.userdata.role == 'user') {
             if (this.state.userdata.id) {
                 finalbookdata = _.filter(bookdata, { 'Member_Id': this.state.userdata.id });
@@ -30,7 +40,7 @@ class HomePage extends Component {
         }
         this.setState({
             books:finalbookdata,
-        })
+        })*/
     }
 
 
@@ -40,6 +50,7 @@ class HomePage extends Component {
         localStorage.removeItem('userdata');
         var loginscreen = [];
         loginscreen.push(<Login appContext={this.props.appContext} key="loginpage"/>);
+        this.props.dispatch(Creators.testSagaSuccess([]));
         this.props.appContext.setState({ loginScreen: loginscreen, homeScreen: [] });
     };
 
@@ -60,6 +71,10 @@ class HomePage extends Component {
 
         this.setState({ onebook: null });
         document.getElementById("addbook").click();
+    }
+
+    saveChanges(event) {
+        document.getElementById("closepopup").click();
     }
 
     render() {
@@ -107,7 +122,7 @@ class HomePage extends Component {
                         <div className="modal-dialog">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <button type="button" className="close" data-dismiss="modal">&times;</button>
+                                    <button type="button" id="closepopup" className="close" data-dismiss="modal">&times;</button>
                                     <h4 className="modal-title">{this.state.onebook ? "UPDATE BOOK" : "ADD BOOK"}</h4>
                                 </div>
                                 <div className="modal-body ">
@@ -184,7 +199,7 @@ class HomePage extends Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <div><RaisedButton label="Save" primary={true} style={style} /></div>
+                                    <div><RaisedButton label="Save" primary={true} style={style} onClick={event => this.saveChanges(event)}/></div>
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
@@ -196,6 +211,19 @@ class HomePage extends Component {
                 </div>
             </MuiThemeProvider>
         );
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        dispatch
+    }
+}
+
+function mapStateToProps(state) {
+    return {
+        bookData: state.global.bookData,
+        testSagaStatus: state.global.status.TEST_SAGA
     }
 }
 
@@ -217,4 +245,4 @@ const tdstyle = {
 }
 
 
-export default HomePage;
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
