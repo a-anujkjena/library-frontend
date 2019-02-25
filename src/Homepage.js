@@ -9,7 +9,6 @@ import _ from 'lodash';
 
 import Login from './Login';
 
-//import bookdata from '../data/book.json';
 import usersdata from '../data/user.json';
 
 class HomePage extends Component {
@@ -19,6 +18,7 @@ class HomePage extends Component {
             userdata: props.userdata,
             books: [],
             onebook: null,
+            title: null,
             users: usersdata,
             testSagaStatus: this.props.testSagaStatus
         }
@@ -26,11 +26,11 @@ class HomePage extends Component {
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            books: nextProps.bookData
+            books: JSON.parse(JSON.stringify(nextProps.bookData))
         })
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
         /*let finalbookdata = bookdata;
         if (this.state.userdata.role && this.state.userdata.role == 'user') {
@@ -39,7 +39,7 @@ class HomePage extends Component {
             }
         }
         this.setState({
-            books:finalbookdata,
+            books: finalbookdata,
         })*/
     }
 
@@ -49,14 +49,42 @@ class HomePage extends Component {
         localStorage.setItem('isLogin', false);
         localStorage.removeItem('userdata');
         var loginscreen = [];
-        loginscreen.push(<Login appContext={this.props.appContext} key="loginpage"/>);
+        loginscreen.push(<Login appContext={this.props.appContext} key="loginpage" />);
         this.props.dispatch(Creators.testSagaSuccess([]));
         this.props.appContext.setState({ loginScreen: loginscreen, homeScreen: [] });
     };
 
     getValues(event) {
-        console.log(event.target.id);
-        console.log(event.target.value);
+        let bookstate = {};
+        if (this.state.onebook) {
+            bookstate = JSON.parse(JSON.stringify(this.state.onebook));
+        }
+        switch (event.target.id) {
+            case 'booktitle':
+                bookstate.Title = event.target.value;
+                this.setState({ onebook: bookstate });
+                break;
+            case 'bookauthor':
+                bookstate.Author = event.target.value;
+                this.setState({ onebook: bookstate });
+                break;
+            case 'bookyear':
+                bookstate.Year = event.target.value;
+                this.setState({ onebook: bookstate });
+                break;
+            case 'assignto':
+                bookstate.Member_Id = event.target.value;
+                this.setState({ onebook: bookstate });
+                break;
+            case 'issuedate':
+                bookstate.Date_of_Issue = event.target.value;
+                this.setState({ onebook: bookstate });
+                break;
+            case 'returndate':
+                bookstate.Date_Of_Return = event.target.value;
+                this.setState({ onebook: bookstate });
+                break;
+        }
     }
 
     openEditPopup(event) {
@@ -101,7 +129,7 @@ class HomePage extends Component {
                         </thead>
                         <tbody>
                             {this.state.books.map(row => (
-                                <tr key={"rowdata"+row.id}>
+                                <tr key={"rowdata" + row.id}>
                                     <td>{row.Title}</td>
                                     <td >{row.Author}</td>
                                     <td >{row.Year}</td>
@@ -133,7 +161,7 @@ class HomePage extends Component {
                                                     <span>Book Title: </span>
                                                 </div>
                                                 <div className='col-md-8'>
-                                                    <input type="text" value={this.state.onebook ? this.state.onebook.Title : ''} id="booktitle" className="form-control" onChange={event => this.getValues(event)} />
+                                                    <input type="text" value={this.state.onebook ? (this.state.onebook.Title ? this.state.onebook.Title : '') : ''} id="booktitle" className="form-control" onChange={event => this.getValues(event)} />
                                                 </div>
                                             </div>
                                         </div>
@@ -143,7 +171,7 @@ class HomePage extends Component {
                                                     <span>Book Author: </span>
                                                 </div>
                                                 <div className='col-md-8'>
-                                                    <input type="text" value={this.state.onebook ? this.state.onebook.Author : ''} id="bookauthor" className="form-control" onChange={event => this.getValues(event)} />
+                                                    <input type="text" value={this.state.onebook ? (this.state.onebook.Author ? this.state.onebook.Author : '') : ''} id="bookauthor" className="form-control" onChange={event => this.getValues(event)} />
                                                 </div>
                                             </div>
                                         </div>
@@ -156,7 +184,7 @@ class HomePage extends Component {
                                                     <span>Book Year: </span>
                                                 </div>
                                                 <div className='col-md-8'>
-                                                    <input type="text" value={this.state.onebook ? this.state.onebook.Year : ''} id="bookyear" className="form-control" onChange={event => this.getValues(event)} />
+                                                    <input type="text" value={this.state.onebook ? (this.state.onebook.Year ? this.state.onebook.Year : '') : ''} id="bookyear" className="form-control" onChange={event => this.getValues(event)} />
                                                 </div>
                                             </div>
                                         </div>
@@ -199,7 +227,7 @@ class HomePage extends Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <div><RaisedButton label="Save" primary={true} style={style} onClick={event => this.saveChanges(event)}/></div>
+                                    <div><RaisedButton label="Save" primary={true} style={style} onClick={event => this.saveChanges(event)} /></div>
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
