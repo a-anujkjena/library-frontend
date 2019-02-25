@@ -9,7 +9,6 @@ import _ from 'lodash';
 
 import Login from './Login';
 
-import bookdata from '../data/book.json';
 import usersdata from '../data/user.json';
 
 class HomePage extends Component {
@@ -32,8 +31,8 @@ class HomePage extends Component {
     }
 
     componentWillMount() {
-        //this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
-        let finalbookdata = bookdata;
+        this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
+        /*let finalbookdata = bookdata;
         if (this.state.userdata.role && this.state.userdata.role == 'user') {
             if (this.state.userdata.id) {
                 finalbookdata = _.filter(bookdata, { 'Member_Id': this.state.userdata.id });
@@ -41,7 +40,7 @@ class HomePage extends Component {
         }
         this.setState({
             books: finalbookdata,
-        })
+        })*/
     }
 
 
