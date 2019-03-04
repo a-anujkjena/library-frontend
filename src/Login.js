@@ -5,6 +5,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import _ from 'lodash';
 import HomePage from './Homepage';
+import { connect } from 'react-redux'
+import { Creators } from './redux/actions'
 
 import userdata from '../data/user.json';
 class Login extends Component {
@@ -14,16 +16,45 @@ class Login extends Component {
             username: '',
             password: '',
             errormessage: '',
+            userdata: null,
+            testStatus: ''
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.userData && nextProps.userData.id) {
+            let userdata = {
+                role: nextProps.userData.role,
+                name: nextProps.userData.name,
+                id: nextProps.userData.id
+            };
+            var HomePageScreen = [];
+            HomePageScreen.push(<HomePage appContext={this.props.appContext} userdata={userdata} key="homepage"/>);
+            localStorage.setItem( 'isLogin', true );
+            localStorage.setItem( 'userdata', JSON.stringify(userdata) );
+            this.props.appContext.setState({ loginScreen: [], homeScreen: HomePageScreen })
+        } else {
+            this.setState({errormessage: "Invalid Cridential"});
+        }
+        this.setState({
+            userdata: nextProps.userData,
+            testStatus: nextProps.testStatus
+        })
+    }
+
     handleClick(event) {
-        var apiBaseUrl = "http://localhost:4000/api/";
-        var self = this;
-        var payload = {
+        let payload = {
             "email": this.state.username,
             "password": this.state.password
         }
+        if((payload.email && payload.password) && (payload.email != '' && payload.password != '')){
+            this.props.dispatch(Creators.testLoginUser(payload));
+        } else {
+            this.setState({errormessage: "Please give all required data"});
+        }
+        
+        /*var apiBaseUrl = "http://localhost:4000/api/";
+        var self = this;
 
         let logindata = userdata;
 
@@ -45,7 +76,7 @@ class Login extends Component {
             }
         } else {
             this.setState({errormessage: "Please give all required data"});
-        }
+        }*/
 
         /*axios.post(apiBaseUrl + 'login', payload)
             .then(function (response) {
@@ -109,4 +140,18 @@ const errorstyle = {
     margin: 15,
     color: 'red'
 };
-export default Login;
+
+function mapDispatchToProps(dispatch) {
+    return {
+        dispatch
+    }
+}
+
+function mapStateToProps(state) {
+    return {
+        userData: state.global.userData,
+        testStatus: state.global.status.TEST_SAGA
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (Login);

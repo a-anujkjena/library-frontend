@@ -25,6 +25,7 @@ class HomePage extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        console.log(JSON.stringify(nextProps.bookData))
         this.setState({
             books: JSON.parse(JSON.stringify(nextProps.bookData))
         })
@@ -90,7 +91,16 @@ class HomePage extends Component {
     openEditPopup(event) {
         let index = _.findIndex(this.state.books, { "id": parseInt(event.target.id) });
         if (index > -1) {
-            this.setState({ onebook: this.state.books[index] });
+            let tempobj = JSON.parse(JSON.stringify(this.state.books[index]));
+            if(this.state.books[index].Date_of_Issue) {
+                let tempdate = tempobj.Date_of_Issue.split("T");
+                tempobj.Date_of_Issue = tempdate[0];
+            }
+            if(this.state.books[index].Date_Of_Return) {
+                let tempdate = tempobj.Date_Of_Return.split("T");
+                tempobj.Date_Of_Return = tempdate[0];
+            }
+            this.setState({ onebook: tempobj });
         }
         document.getElementById("b" + event.target.id).click();
     }
