@@ -20,28 +20,40 @@ class HomePage extends Component {
             onebook: null,
             title: null,
             users: usersdata,
-            testSagaStatus: this.props.testSagaStatus
+            testSagaStatus: this.props.testSagaStatus,
+            apiResult: {},
+            action: null,
+            operation: null
         }
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log(JSON.stringify(nextProps.bookData))
-        this.setState({
-            books: JSON.parse(JSON.stringify(nextProps.bookData))
-        })
+        if(this.state.action && this.state.action == 'return') {
+            if(nextProps.apiResult && nextProps.apiResult.status_code && nextProps.apiResult.status_code == 1) {
+                this.state.action=null;
+                this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
+                alert('Book Return Successfully');
+            } else {
+                alert('Something Went Worng');
+            }
+        } else if(this.state.action && this.state.action == 'bookrud'){
+            if(nextProps.apiResult && nextProps.apiResult.status_code && nextProps.apiResult.status_code == 1) {
+                this.state.action=null;
+                document.getElementById("closepopup").click();
+                this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
+                alert('Operation Done Successfully');
+            } else {
+                alert('Something Went Worng');
+            }
+        } else {
+            this.setState({
+                books: JSON.parse(JSON.stringify(nextProps.bookData))
+            })
+        }
     }
 
     componentWillMount() {
         this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
-        /*let finalbookdata = bookdata;
-        if (this.state.userdata.role && this.state.userdata.role == 'user') {
-            if (this.state.userdata.id) {
-                finalbookdata = _.filter(bookdata, { 'Member_Id': this.state.userdata.id });
-            }
-        }
-        this.setState({
-            books: finalbookdata,
-        })*/
     }
 
 
@@ -54,6 +66,11 @@ class HomePage extends Component {
         this.props.dispatch(Creators.testSagaSuccess([]));
         this.props.appContext.setState({ loginScreen: loginscreen, homeScreen: [] });
     };
+
+    returnBook(event) {
+        this.state.action="return";
+        this.props.dispatch(Creators.testReturnBook(event.target.id));
+    }
 
     getValues(event) {
         let bookstate = {};
@@ -102,17 +119,36 @@ class HomePage extends Component {
             }
             this.setState({ onebook: tempobj });
         }
+        this.state.operation="update"
         document.getElementById("b" + event.target.id).click();
     }
 
     openAddPopup(event) {
-
+        this.state.operation="insert"
         this.setState({ onebook: null });
         document.getElementById("addbook").click();
     }
 
     saveChanges(event) {
-        document.getElementById("closepopup").click();
+        this.state.action="bookrud";
+        if( this.state.onebook) {
+            this.state.onebook.action = this.state.operation;
+        } else {
+            this.state.onebook = {};
+            this.state.onebook.action = this.state.operation
+        }
+        
+        this.props.dispatch(Creators.testBookCrud(this.state.onebook));
+    }
+
+    deleteBook(event) {
+        this.state.action="bookrud";
+        let tempid = event.target.id.split("_");
+        let data = {
+            action: "delete",
+            id: tempid[1]
+        }
+        this.props.dispatch(Creators.testBookCrud(data));
     }
 
     render() {
@@ -148,8 +184,8 @@ class HomePage extends Component {
                                     <td >{row.Member_Id}</td>
                                     <td >
                                         {(this.state.userdata.role == 'admin') ? <div><a href="#"><span id={row.id} className="glyphicon glyphicon-edit" onClick={event => this.openEditPopup(event)}></span></a>&nbsp;&nbsp;<a href="#">
-                                            <span className="glyphicon glyphicon-trash"></span>
-                                        </a><RaisedButton style={btstyle} id={"b" + row.id} label="Edit" primary={true} data-toggle="modal" data-target="#myModal" /></div> : <div><button id={row.id} type="button" className="btn btn-info" >Return</button></div>}
+                                            <span id={"d_"+row.id} className="glyphicon glyphicon-trash" onClick={event => this.deleteBook(event)}></span>
+                                        </a><RaisedButton style={btstyle} id={"b" + row.id} label="Edit" primary={true} data-toggle="modal" data-target="#myModal" /></div> : <div><button id={row.id} type="button" className="btn btn-info" onClick={(event) => this.returnBook(event)} >Return</button></div>}
                                     </td>
                                 </tr>
                             ))}
@@ -261,7 +297,8 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
     return {
         bookData: state.global.bookData,
-        testSagaStatus: state.global.status.TEST_SAGA
+        testSagaStatus: state.global.status.TEST_SAGA,
+        apiResult: state.global.apiResult
     }
 }
 

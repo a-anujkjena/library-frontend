@@ -21,6 +21,38 @@ export function getBookData(user) {
     });
 }
 
+export function returnBook(id) {
+    return new Promise(function (resolve, reject) {
+        axios.get(apiBaseUrl + 'returnbook?id='+id)
+            .then(function (response) {
+                if (response.status == 200) {
+                    resolve(response.data);
+                } else {
+                    reject("something went wrong")
+                }
+            })
+            .catch(function (error) {
+                reject(error);
+            });
+    });
+}
+
+export function bookCrud(bookdata) {
+    return new Promise(function (resolve, reject) {
+        axios.post(apiBaseUrl + 'bookcrud',bookdata)
+            .then(function (response) {
+                if (response.status == 200) {
+                    resolve(response.data);
+                } else {
+                    reject("something went wrong")
+                }
+            })
+            .catch(function (error) {
+                reject(error);
+            });
+    });
+}
+
 export function loginUser(userdata) {
     return new Promise(function (resolve, reject) {
         var payload = {
