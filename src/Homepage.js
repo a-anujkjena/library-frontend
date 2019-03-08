@@ -8,8 +8,9 @@ import { Creators } from './redux/actions'
 import _ from 'lodash';
 
 import Login from './Login';
+import { ActionPermDeviceInformation } from 'material-ui/svg-icons';
 
-import usersdata from '../data/user.json';
+//import usersdata from '../data/user.json';
 
 class HomePage extends Component {
     constructor(props) {
@@ -19,7 +20,16 @@ class HomePage extends Component {
             books: [],
             onebook: null,
             title: null,
-            users: usersdata,
+            users: [
+                {
+                    id:1,
+                    name:"Admin"
+                },
+                {
+                    id:2,
+                    name:"User"
+                }
+            ],
             testSagaStatus: this.props.testSagaStatus,
             apiResult: {},
             action: null,

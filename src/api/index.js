@@ -1,4 +1,4 @@
-import bookdata from '../../data/book.json';
+
 import _ from 'lodash';
 import axios from 'axios';
 

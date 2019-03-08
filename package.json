@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "aws-amplify": "^1.1.22",
+    "aws-amplify-react": "^2.3.2",
+    "aws-sdk": "^2.417.0",
     "axios": "^0.18.0",
     "jquery": "^3.3.1",
     "lodash": "^4.17.11",
@@ -11,7 +14,7 @@
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
     "react-redux": "^6.0.0",
-    "react-scripts": "2.1.5",
+    "react-scripts": "^2.1.8",
     "react-tap-event-plugin": "^3.0.3",
     "redux-saga": "^1.0.1",
     "redux-seamless-immutable": "^0.4.0",

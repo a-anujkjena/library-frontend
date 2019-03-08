@@ -8,7 +8,6 @@ import HomePage from './Homepage';
 import { connect } from 'react-redux'
 import { Creators } from './redux/actions'
 
-import userdata from '../data/user.json';
 class Login extends Component {
     constructor(props) {
         super(props);
