@@ -9,6 +9,7 @@ import _ from 'lodash';
 
 import Login from './Login';
 import { ActionPermDeviceInformation } from 'material-ui/svg-icons';
+import { stat } from 'fs';
 
 //import usersdata from '../data/user.json';
 
@@ -20,16 +21,7 @@ class HomePage extends Component {
             books: [],
             onebook: null,
             title: null,
-            users: [
-                {
-                    id:1,
-                    name:"Admin"
-                },
-                {
-                    id:2,
-                    name:"User"
-                }
-            ],
+            users: [],
             testSagaStatus: this.props.testSagaStatus,
             apiResult: {},
             action: null,
@@ -38,23 +30,27 @@ class HomePage extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(this.state.action && this.state.action == 'return') {
-            if(nextProps.apiResult && nextProps.apiResult.status_code && nextProps.apiResult.status_code == 1) {
-                this.state.action=null;
+        if (this.state.action && this.state.action == 'return') {
+            if (nextProps.apiResult && nextProps.apiResult.status_code && nextProps.apiResult.status_code == 1) {
+                this.state.action = null;
                 this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
                 alert('Book Return Successfully');
             } else {
                 alert('Something Went Worng');
             }
-        } else if(this.state.action && this.state.action == 'bookrud'){
-            if(nextProps.apiResult && nextProps.apiResult.status_code && nextProps.apiResult.status_code == 1) {
-                this.state.action=null;
+        } else if (this.state.action && this.state.action == 'bookcrud') {
+            if (nextProps.apiResult && nextProps.apiResult.status_code && nextProps.apiResult.status_code == 1) {
+                this.state.action = null;
                 document.getElementById("closepopup").click();
                 this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
                 alert('Operation Done Successfully');
             } else {
                 alert('Something Went Worng');
             }
+        } else if (this.state.action && this.state.action == 'getuser') {
+            this.state.action = null;
+            this.state.users = nextProps.userListData;
+            this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
         } else {
             this.setState({
                 books: JSON.parse(JSON.stringify(nextProps.bookData))
@@ -63,7 +59,9 @@ class HomePage extends Component {
     }
 
     componentWillMount() {
-        this.props.dispatch(Creators.testSagaRequest(this.state.userdata));
+        this.state.action = 'getuser';
+        this.state.books = [];
+        this.props.dispatch(Creators.testGetUser());
     }
 
 
@@ -78,7 +76,7 @@ class HomePage extends Component {
     };
 
     returnBook(event) {
-        this.state.action="return";
+        this.state.action = "return";
         this.props.dispatch(Creators.testReturnBook(event.target.id));
     }
 
@@ -119,40 +117,52 @@ class HomePage extends Component {
         let index = _.findIndex(this.state.books, { "id": parseInt(event.target.id) });
         if (index > -1) {
             let tempobj = JSON.parse(JSON.stringify(this.state.books[index]));
-            if(this.state.books[index].Date_of_Issue) {
+            if (this.state.books[index].Date_of_Issue) {
                 let tempdate = tempobj.Date_of_Issue.split("T");
                 tempobj.Date_of_Issue = tempdate[0];
             }
-            if(this.state.books[index].Date_Of_Return) {
+            if (this.state.books[index].Date_Of_Return) {
                 let tempdate = tempobj.Date_Of_Return.split("T");
                 tempobj.Date_Of_Return = tempdate[0];
             }
             this.setState({ onebook: tempobj });
         }
-        this.state.operation="update"
+        this.state.operation = "update"
         document.getElementById("b" + event.target.id).click();
     }
 
     openAddPopup(event) {
-        this.state.operation="insert"
+        this.state.operation = "insert"
         this.setState({ onebook: null });
         document.getElementById("addbook").click();
     }
 
     saveChanges(event) {
-        this.state.action="bookrud";
-        if( this.state.onebook) {
+        this.state.action = "bookcrud";
+        let bookid = this.state.books[0].id;
+        if (this.state.onebook) {
             this.state.onebook.action = this.state.operation;
         } else {
             this.state.onebook = {};
             this.state.onebook.action = this.state.operation
         }
-        
+        if (!this.state.onebook.id) {
+            this.state.onebook.id = bookid + 1;
+        }
+        if(this.state.onebook.Member_Id == '0') {
+            this.state.onebook.Member_Id = null;
+        }
+        if(this.state.onebook.Date_Of_Return == '') {
+            this.state.onebook.Date_Of_Return = null;
+        }
+        if(this.state.onebook.Date_of_Issue == '') {
+            this.state.onebook.Date_of_Issue = null;
+        }
         this.props.dispatch(Creators.testBookCrud(this.state.onebook));
     }
 
     deleteBook(event) {
-        this.state.action="bookrud";
+        this.state.action = "bookcrud";
         let tempid = event.target.id.split("_");
         let data = {
             action: "delete",
@@ -166,11 +176,6 @@ class HomePage extends Component {
         return (
             <MuiThemeProvider>
                 <div>
-                    <AppBar title={this.state.userdata.name}>
-                        <div>
-                            <RaisedButton label="Logout" primary={true} style={style} onClick={(event) => this.handleClick(event)} />
-                        </div>
-                    </AppBar>
                     <table className="table table-striped" style={style}>
                         <thead>
                             <tr>
@@ -179,7 +184,7 @@ class HomePage extends Component {
                                 <th style={tdstyle}>Year</th>
                                 <th style={tdstyle}>Date of Issue</th>
                                 <th style={tdstyle}>Date Of Return</th>
-                                <th style={tdstyle}>Member Id</th>
+                                <th style={tdstyle}>AssignTo</th>
                                 <th style={tdstyle}>Action</th>
                             </tr>
                         </thead>
@@ -191,10 +196,13 @@ class HomePage extends Component {
                                     <td >{row.Year}</td>
                                     <td >{row.Date_of_Issue}</td>
                                     <td >{row.Date_Of_Return}</td>
-                                    <td >{row.Member_Id}</td>
+                                    <td>{this.state.users.map(optiondata => (
+                                        optiondata.id == row.Member_Id ? optiondata.name : null
+                                    ))}</td>
+                                    
                                     <td >
                                         {(this.state.userdata.role == 'admin') ? <div><a href="#"><span id={row.id} className="glyphicon glyphicon-edit" onClick={event => this.openEditPopup(event)}></span></a>&nbsp;&nbsp;<a href="#">
-                                            <span id={"d_"+row.id} className="glyphicon glyphicon-trash" onClick={event => this.deleteBook(event)}></span>
+                                            <span id={"d_" + row.id} className="glyphicon glyphicon-trash" onClick={event => this.deleteBook(event)}></span>
                                         </a><RaisedButton style={btstyle} id={"b" + row.id} label="Edit" primary={true} data-toggle="modal" data-target="#myModal" /></div> : <div><button id={row.id} type="button" className="btn btn-info" onClick={(event) => this.returnBook(event)} >Return</button></div>}
                                     </td>
                                 </tr>
@@ -308,7 +316,8 @@ function mapStateToProps(state) {
     return {
         bookData: state.global.bookData,
         testSagaStatus: state.global.status.TEST_SAGA,
-        apiResult: state.global.apiResult
+        apiResult: state.global.apiResult,
+        userListData: state.global.userListData
     }
 }
 

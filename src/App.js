@@ -90,8 +90,12 @@ class App extends Component {
             [loginurl]: data.getIdToken().getJwtToken()
           }
         });
+        let temprole = "user";
+        if(data.idToken.payload["custom:custom:role"] && (data.idToken.payload["custom:custom:role"] == "Admin" || data.idToken.payload["custom:custom:role"] == "admin")){
+          temprole = "admin";
+        }
         let userdata = {
-          role: data.idToken.payload["custom:custom:role"],
+          role: temprole,
           name: data.idToken.payload.name,
           id: data.idToken.payload.sub
         };
@@ -102,6 +106,7 @@ class App extends Component {
       })
       .catch(err => {
         console.log(err)
+        this.state.status="Fail"
         this.setState({error:err});
       });
   }

@@ -6,6 +6,8 @@ const { Types, Creators } =  createActions({
     testLoginUser: ['userdata'],
     testReturnBook: ['bookid'],
     testBookCrud: ['bookrowdata'],
+    testGetUser:[],
+    testUserSuccess:['userListData'],
     testApiSuccess: ['result'],
     testSagaSuccess: ['bookData'],
     testLoginSuccess: ['userData'],

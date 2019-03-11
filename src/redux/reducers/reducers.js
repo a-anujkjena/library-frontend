@@ -6,7 +6,8 @@ export const InitialState = Immutable({
     status: {},
     bookData: [],
     userData: {},
-    apiResult: {}
+    apiResult: {},
+    userListData:[]
 })
 
 const updateStatus = (state, action) => {
@@ -27,6 +28,13 @@ const userData = (state, action) => {
     }
 }
 
+const userListData = (state, action) => {
+    return {
+        ...state,
+        userListData: action.userListData
+    }
+}
+
 const apiResult = (state, action) => {
     return {
         ...state,
@@ -38,6 +46,7 @@ export const handlers= {
     [Types.TEST_SAGA_SUCCESS]: bookData,
     [Types.TEST_API_SUCCESS]: apiResult,
     [Types.TEST_LOGIN_SUCCESS]: userData,
+    [Types.TEST_USER_SUCCESS]: userListData,
     [Types.UPDATE_STATUS]: updateStatus
 }
 
