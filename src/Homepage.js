@@ -139,7 +139,12 @@ class HomePage extends Component {
 
     saveChanges(event) {
         this.state.action = "bookcrud";
-        let bookid = this.state.books[0].id;
+        let bookid = 0;
+        this.state.books.forEach(function(item){
+            if(item.id > bookid) {
+                bookid = item.id;
+            }
+        });
         if (this.state.onebook) {
             this.state.onebook.action = this.state.operation;
         } else {
