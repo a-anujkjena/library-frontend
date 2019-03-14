@@ -181,7 +181,7 @@ class HomePage extends Component {
         return (
             <MuiThemeProvider>
                 <div>
-                    <table className="table table-striped" style={style}>
+                    <table className="table table-striped">
                         <thead>
                             <tr>
                                 <th style={tdstyle}>Title</th>

@@ -21,7 +21,7 @@ function* testUserList(action) {
         let userListData = yield getUsersList();
         yield put(Creators.testUserSuccess(userListData))
     } catch (err) {
-        yield put(Creators.testUserSuccess({}))
+        yield put(Creators.testUserSuccess([]))
     }
 }
 
