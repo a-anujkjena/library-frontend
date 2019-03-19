@@ -67,6 +67,7 @@ Amplify.configure({
   }
 });
 
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -79,6 +80,8 @@ class App extends Component {
   }
 
   componentWillMount() {
+    localStorage.setItem( 'isLogin', false );
+    localStorage.removeItem('userdata');
     Auth.currentSession()
       .then(data => {
         let loginurl = 'cognito-idp.' + AWSConfig.cognito.REGION + '.amazonaws.com/' + AWSConfig.cognito.USER_POOL_ID
