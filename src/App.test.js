@@ -6,7 +6,22 @@ import App from './App';
 import Homepage from './Homepage'
 
 configure({adapter: new Adapter()});
-it('renders without crashing', () => {
+
+describe('>>>Layout --- Test',()=>{
+  it('renders without crashing', () => {
+    const div = document.createElement('div');
+    ReactDOM.render(<App />, div);
+    ReactDOM.unmountComponentAtNode(div);
+  });
+});
+
+describe('>>>Layout --- Test',()=>{
+  it("should render my component", () => {
+    const wrapper = shallow(<Homepage />);
+    expect(wrapper.length).toEqual(1)
+  });
+});
+/*it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(<App />, div);
   ReactDOM.unmountComponentAtNode(div);
@@ -14,4 +29,5 @@ it('renders without crashing', () => {
 
 it("should render my component", () => {
   const wrapper = shallow(<Homepage />);
-});
+  expect(wrapper.length).toEqual(1)
+});*/
